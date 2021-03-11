@@ -12,7 +12,6 @@
 	int num = Integer.parseInt(request.getParameter("num"));
 	AddressDAO dao = AddressDAO.getInstance();
 	Address ad = dao.findByNum(num);
-	out.println(ad.getAddr());
 %>
 
 <script type="text/javascript">
@@ -33,21 +32,21 @@
 		<table>
 			<tr>
 				<th>이름</th>
-				<td><input type="text" name="name" value=<%=ad.getName() %>></td>
+				<td><input type="text" name="name" value="<%=ad.getName() %>"></td>
 			</tr>
 			<tr>
 				<th>우편번호</th>
-				<td><input type="text" name="zipcode" id="zipcode" size="7" value=<%=ad.getZipcode() %>>
+				<td><input type="text" name="zipcode" id="zipcode" size="7" value="<%=ad.getZipcode() %>">
 				<input type="button" value="검색" onclick="zipfinder()">
 				</td>
 			</tr>
 			<tr>
 				<th>주소</th>
-				<td><input type="text" name="addr" id="addr" size="50" value=<%=ad.getAddr() %>></td>
+				<td><input type="text" name="addr" id="addr" size="50" value="<%=ad.getAddr() %>"></td>
 			</tr>
 			<tr>
 				<th>전화번호</th>
-				<td><input type="text" name="tel" value=<%=ad.getTel() %>></td>
+				<td><input type="text" name="tel" value="<%=ad.getTel() %>"></td>
 			</tr>
 			<tr>
 				<td colspan="2">
