@@ -1,0 +1,18 @@
+[
+	{
+		"memberNumber" : "m001",
+		"irum" : "goroman",
+		"picture" : "goroman.png"
+	},
+	{
+		"memberNumber" : "m002",
+		"irum" : "kingkang",
+		"picture" : "myFace.png"
+	},
+	{
+		"memberNumber" : "m003",
+		"irum" : "coco",
+		"picture" : "myrr.png"
+	}
+
+]
