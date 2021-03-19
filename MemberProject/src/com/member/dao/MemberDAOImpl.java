@@ -59,34 +59,127 @@ public class MemberDAOImpl implements MemberDAO{
 		return arr;
 	}
 
+//	회원추가
 	@Override
 	public void memInsert(MemberDTO member) {
-		// TODO Auto-generated method stub
+		Connection con = null;
+		PreparedStatement ps = null;
 		
+		try {
+			con = getConnection();
+			String sql = "insert into memberdb values(?,?,?,?,?,?)";
+			ps = con.prepareStatement(sql);
+			ps = con.prepareStatement(sql);
+			ps.setString(1, member.getName());
+			ps.setString(2, member.getUserid());
+			ps.setString(3, member.getPwd());
+			ps.setString(4, member.getEmail());
+			ps.setString(5, member.getPhone());
+			ps.setInt(6, member.getAdmin());
+			ps.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(con, ps, null, null);
+		}
 	}
 
+//	회원수정
 	@Override
 	public int memUpdate(MemberDTO member) {
-		// TODO Auto-generated method stub
-		return 0;
+		Connection con = null;
+		PreparedStatement ps = null;
+		int flag = 0;
+		
+		try {
+			con = getConnection();
+			String sql = "update memberdb set name=?, pwd=?, email=?, admin=?, phone=? where userid=?";
+			ps = con.prepareStatement(sql);
+			ps.setString(1, member.getName());
+			ps.setString(2, member.getPwd());
+			ps.setString(3, member.getEmail());
+			ps.setInt(4, member.getAdmin());
+			ps.setString(5, member.getPhone());
+			ps.setString(6, member.getUserid());
+			flag = ps.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(con, ps, null, null);
+		}
+		
+		return flag;
 	}
 
+//	회원삭제
 	@Override
 	public void memDelete(String userId) {
-		// TODO Auto-generated method stub
+		Connection con = null;
+		Statement st = null;
 		
+		try {
+			con = getConnection();
+			String sql = "delete from memberdb where userid ='"+userId+"'";
+			st = con.createStatement();
+			st.execute(sql);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(con, null, st, null);
+		}
 	}
 
+//	상세보기
 	@Override
 	public MemberDTO findById(String userId) {
-		// TODO Auto-generated method stub
-		return null;
+		Connection con = null;
+		Statement st = null;
+		ResultSet rs = null;
+		MemberDTO member = null;
+		
+		try {
+			con = getConnection();
+			String sql = "select name, userid, pwd, email, phone, admin from memberdb where userid = '"+userId+"'";
+			st = con.createStatement();
+			rs = st.executeQuery(sql);
+			if(rs.next()) {
+				member = new MemberDTO();
+				member.setName(rs.getString("name"));
+				member.setUserid(rs.getString("userid"));
+				member.setPwd(rs.getString("pwd"));
+				member.setEmail(rs.getString("email"));
+				member.setPhone(rs.getString("phone"));
+				member.setAdmin(rs.getInt("admin"));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(con, null, st, rs);
+		}
+		return member;
 	}
 
+//	아이디 중복확인
 	@Override
 	public String idCheck(String userId) {
-		// TODO Auto-generated method stub
-		return null;
+		Connection con = null;
+		Statement st = null;
+		ResultSet rs = null;
+		String flag = "yes"; //id 사용 가능
+		
+		try {
+			con = getConnection();
+			String sql = "select * from memberdb where userid = '"+userId+"'";
+			st = con.createStatement();
+			rs = st.executeQuery(sql);
+			if(rs.next())
+				flag = "no";
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(con, null, st, rs);
+		}
+		return flag;
 	}
 
 //	로그인 체크

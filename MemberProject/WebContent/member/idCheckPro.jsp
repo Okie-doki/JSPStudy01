@@ -4,13 +4,7 @@
 <%
 	request.setCharacterEncoding("utf-8");
 	String userid = request.getParameter("userid");
-	String pwd = request.getParameter("pwd");
 	MemberDAOImpl dao = MemberDAOImpl.getInstance();
-	
-// 	로그인 체크
-	int flag = dao.loginCheck(userid, pwd);
+	String flag = dao.idCheck(userid);
 	out.println(flag);
-	if(flag==0||flag==1){
-		session.setAttribute("userid", userid);
-	}
 %>

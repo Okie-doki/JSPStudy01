@@ -35,8 +35,11 @@
 						alert("비밀번호가 틀립니다 비번 확인하세요");
 					}else if(resp.trim()==1){ //관리자
 						alert("관리자 로그인");
+// 						location.href="memberList.jsp";
+						$(location).attr("href", "memberList.jsp"); //location 요소에 href 속성 추가
 					}else if(resp.trim()==0){
 						alert("일반회원 로그인");
+						$(location).attr("href", "memberView.jsp");
 					}
 				},
 				erro : function(e) {

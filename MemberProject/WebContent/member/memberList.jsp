@@ -8,6 +8,9 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script type="text/javascript" src="member.js?ver=2"></script>
+
 <%
 	request.setCharacterEncoding("utf-8");
 	String sid = (String)session.getAttribute("userid");
@@ -18,10 +21,10 @@
 </head>
 <body>
 	<div align="right">
-		<a></a>관리자님 반갑습니다 /
-		<a>로그아웃</a>
+		<a href="memberView.jsp"><%=sid %></a>관리자님 반갑습니다 /
+		<a href="logout.jsp">로그아웃</a>
 	</div>
-	<h3>전체보기(<%=count %>)</h3>
+	<h3>전체보기(<span id="countSpan"><%=count %></span>)</h3>
 	<table>
 		<thead>
 			<tr>
@@ -43,7 +46,7 @@
 				<td><%=member.getPhone() %></td>
 				<td><%=member.getEmail() %></td>
 				<td><%=mode %></td>
-				<td><a>삭제</a></td>
+				<td><a href="javascript:del('<%=member.getUserid()%>', '<%=mode%>')">삭제</a></td>
 			</tr>
 		<%
 			}
