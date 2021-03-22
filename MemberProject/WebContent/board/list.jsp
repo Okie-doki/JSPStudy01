@@ -12,8 +12,16 @@
 	request.setCharacterEncoding("utf-8");
 	BoardDAO dao = BoardDAO.getInstance();
 	
-	ArrayList<BoardDTO> arr = dao.boardList();
-	int count = dao.boardCount();
+// 	검색
+	String field ="";
+	String word = "";
+	if(request.getParameter("word")!=null){
+		word = request.getParameter("word");
+		field = request.getParameter("field");
+	}
+	
+	ArrayList<BoardDTO> arr = dao.boardList(field, word);
+	int count = dao.boardCount(field, word);
 	
 %>
 
@@ -45,6 +53,16 @@
 			}
 		%>
 	</table>
+	<br><br>
+	
+	<form action="list.jsp" name="search" method="get">
+		<select name="field" size="1">
+			<option value="subject">제목</option>
+			<option value="writer">작성자</option>
+		</select>
+		<input type="text" size="16" name="word">
+		<input type="submit" value="찾기">
+	</form>
 
 </body>
 </html>

@@ -13,6 +13,7 @@
 	int num = Integer.parseInt(request.getParameter("num"));
 	BoardDAO dao  = BoardDAO.getInstance();
 	BoardDTO board = dao.boardView(num);
+	
 %>
 <script type="text/javascript">
 	function del() {

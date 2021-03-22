@@ -27,8 +27,8 @@ public class BoardDAO {
 		return ds.getConnection();
 	}
 	
-//	전체보기(기본)
-	public ArrayList<BoardDTO> boardList(){
+//	전체보기(검색 가능)
+	public ArrayList<BoardDTO> boardList(String field, String word){
 		Connection con = null;
 		Statement st = null;
 		ResultSet rs = null;
@@ -36,7 +36,13 @@ public class BoardDAO {
 		
 		try {
 			con = getConnection();
-			String sql = "select * from board";
+			String sql = "";
+//			검색 여부(word 값의 존져 여부 확인)
+			if(word.equals("")) {
+				sql = "select * from board order by num desc";
+			}else { //검색값 존재
+				sql = "select * from board where "+field+" like '%"+word+"' order by num desc";
+			}
 			st = con.createStatement();
 			rs = st.executeQuery(sql);
 			while(rs.next()) {
@@ -62,11 +68,14 @@ public class BoardDAO {
 		Statement st = null;
 		ResultSet rs = null;
 		BoardDTO board = null;
+		String sql = "";
 		
 		try {
 			con = getConnection();
-			String sql = "select * from board where num = "+num;
 			st = con.createStatement();
+			sql = "update board set readcount = readcount+1 where num="+num; //조회수
+			st.executeUpdate(sql);
+			sql = "select * from board where num = "+num;
 			rs = st.executeQuery(sql);
 			while(rs.next()) {
 				board = new BoardDTO();
@@ -91,8 +100,8 @@ public class BoardDAO {
 		return board;
 	}
 	
-//	list 갯수
-	public int boardCount() {
+//	list 갯수(검색 연동)
+	public int boardCount(String field, String word) {
 		Connection con = null;
 		Statement st = null;
 		ResultSet rs = null;
@@ -100,8 +109,15 @@ public class BoardDAO {
 		
 		try {
 			con = getConnection();
+			String sql = "";
 			st = con.createStatement();
-			String sql = "select count(*) count from board";
+			
+//			word 값 존재하는지로 검색여부 판단
+			if(word.equals("")) {
+				sql = "select count(*) count from board";
+			}else {
+				sql = "select count(*) count from board where "+field+" like '%"+word+"'";
+			}
 			rs = st.executeQuery(sql);
 			if(rs.next())
 				count = rs.getInt("count");
@@ -110,7 +126,6 @@ public class BoardDAO {
 		} finally {
 			closeConnection(con, null, st, rs);
 		}
-		
 		return count;
 	}
 	
@@ -118,6 +133,7 @@ public class BoardDAO {
 	public void boardInsert(BoardDTO board) {
 		Connection con = null;
 		PreparedStatement ps = null;
+		ResultSet rs = null;
 		
 		try {
 			con = getConnection();
@@ -138,7 +154,7 @@ public class BoardDAO {
 		}
 	}
 	
-//	게시글 수정
+//	게시글 수정(비밀번호 체크 후 수정)
 	public int boardUpdate(BoardDTO board) {
 		Connection con = null;
 		PreparedStatement ps = null;
@@ -147,14 +163,21 @@ public class BoardDAO {
 		
 		try {
 			con = getConnection();
-			String sql = "update board set subject=?, email=?, content=?, ip=?, reg_date=sysdate where num=?";
+			String sql = "select passwd from board where num = "+board.getNum();
 			ps = con.prepareStatement(sql);
-			ps.setString(1, board.getSubject());
-			ps.setString(2, board.getEmail());
-			ps.setString(3, board.getContent());
-			ps.setString(4, board.getIp());
-			ps.setInt(5, board.getNum());
-			flag = ps.executeUpdate();
+			rs = ps.executeQuery();
+			if(rs.next()) { //비번확인
+				if(rs.getString("passwd").equals(board.getPasswd())) {
+					sql = "update board set subject=?, email=?, content=?, ip=?, reg_date=sysdate where num=?";
+					ps = con.prepareStatement(sql);
+					ps.setString(1, board.getSubject());
+					ps.setString(2, board.getEmail());
+					ps.setString(3, board.getContent());
+					ps.setString(4, board.getIp());
+					ps.setInt(5, board.getNum());
+					flag = ps.executeUpdate();
+				}
+			}
 			
 		} catch (Exception e) {
 			e.printStackTrace();
