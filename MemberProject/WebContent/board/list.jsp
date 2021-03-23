@@ -20,9 +20,17 @@
 		field = request.getParameter("field");
 	}
 	
-	ArrayList<BoardDTO> arr = dao.boardList(field, word);
+// 	한 화면에 보여지는 게시글
+	String pageNum = request.getParameter("pageNum");
+	if(pageNum==null){
+		pageNum = "1";
+	}
+	int currentPage = Integer.parseInt(pageNum);
+	int pageSize = 5; //한 화면에 보여지는 게시글 갯수
+	int startRow = (currentPage-1)*pageSize+1; //시작할 게시물 번호
+	int endRow = currentPage*pageSize; //마지막 게시물 번호 페이지
+	ArrayList<BoardDTO> arr = dao.boardList(field, word, startRow, endRow);
 	int count = dao.boardCount(field, word);
-	
 %>
 
 </head>
@@ -64,5 +72,46 @@
 		<input type="submit" value="찾기">
 	</form>
 
+	<div align="center">
+		<%
+			if(count>0){ //예) 게시글 48개 화면에서 한화면에 5개씩 출력 -> 48/5 = 10개
+				int pageCount = count/pageSize + (count%pageSize==0? 0:1); //페이지 수 - count%pageSize 나머지값이 존재하면 페이지 수 1추가
+				int pageBlock = 3; //한 화면에 출력할 페이지수
+				int startPage = (int)((currentPage-1)/pageBlock)*pageBlock+1;
+				int endPage = startPage + pageBlock - 1;
+				if(endPage > pageCount){
+					endPage = pageCount;
+				}
+				
+				//이전
+				if(startPage > pageBlock){
+					%>
+					<a href="list.jsp?pageNum=<%=startPage-pageBlock%>&field=<%=field%>&word=<%=word%>">[이전]</a>
+					<%
+				}
+				
+				//페이지 번호
+				//word가 검색되었을 때 페이지 이동 시 값을 그대로 갖고 가기 위해 field와 word값을 포함
+				for(int i=startPage; i<=endPage; i++){
+					if(i==currentPage){ //현재 페이지에는 링크 없음
+				%>
+						[<%=i %>]
+				<%
+					}else{ //현재 페이지가 아닐 경우 이동하기 위한 링크 존재
+				%>
+						<a href="list.jsp?pageNum=<%=i%>&field=<%=field%>&word=<%=word%>"><%=i %></a>
+				<%
+					}
+				}
+				
+				//다음
+				if(endPage < pageCount){
+					%>
+					<a href="list.jsp?pageNum=<%=startPage+pageBlock%>&field=<%=field%>&word=<%=word%>">[다음]</a>
+					<%
+				}
+			}
+		%>
+	</div>
 </body>
 </html>

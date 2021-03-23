@@ -28,23 +28,35 @@ public class BoardDAO {
 	}
 	
 //	전체보기(검색 가능)
-	public ArrayList<BoardDTO> boardList(String field, String word){
+	public ArrayList<BoardDTO> boardList(String field, String word, int startRow, int endRow){
 		Connection con = null;
-		Statement st = null;
+		PreparedStatement ps = null;
 		ResultSet rs = null;
 		ArrayList<BoardDTO> arr = new ArrayList<BoardDTO>();	
 		
 		try {
 			con = getConnection();
-			String sql = "";
+			StringBuilder sb = new StringBuilder(); //sql 내용이 길어 StringBuilder 사용
 //			검색 여부(word 값의 존져 여부 확인)
 			if(word.equals("")) {
-				sql = "select * from board order by num desc";
+				sb.append("select * from (");
+				sb.append(" select rownum rn, aa.* from (");
+				sb.append(" select * from board");
+				sb.append(" order by num desc, ref desc, re_step asc) aa");
+				sb.append(" where rownum <= ?");
+				sb.append(") where rn >= ?");
 			}else { //검색값 존재
-				sql = "select * from board where "+field+" like '%"+word+"' order by num desc";
+				sb.append("select * from (");
+				sb.append(" select rownum rn, aa.* from (");
+				sb.append(" select * from board where "+field+" like '%"+word+"%'"); //필드값, 검색값 추가
+				sb.append(" order by num desc, ref desc, re_step asc) aa");
+				sb.append(" where rownum <= ?");
+				sb.append(") where rn >= ?");
 			}
-			st = con.createStatement();
-			rs = st.executeQuery(sql);
+			ps = con.prepareStatement(sb.toString());
+			ps.setInt(1, endRow);
+			ps.setInt(2, startRow);
+			rs = ps.executeQuery();
 			while(rs.next()) {
 				BoardDTO board = new BoardDTO();
 				board.setNum(rs.getInt("num"));
@@ -57,7 +69,7 @@ public class BoardDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			closeConnection(con, null, st, rs);
+			closeConnection(con, ps, null, rs);
 		}
 		return arr;
 	}
