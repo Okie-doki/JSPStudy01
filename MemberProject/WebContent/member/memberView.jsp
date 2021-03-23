@@ -24,7 +24,9 @@
 <body>
 	<div align="right" class="container pt-3">
 		<%=sid %>님 반갑습니다 /
-		<a href="logout.jsp">로그아웃</a>
+		<a href="logout.jsp">로그아웃</a> /
+		<!-- 		board 연동을 위한 임시 작업 -->
+		<a href="/MemberProject/board/list.jsp">게시판 이동</a>
 	</div>
 	<h3>회원정보 변경</h3>
 	<a href="userDelete.jsp">회원탈퇴</a>

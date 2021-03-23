@@ -31,12 +31,31 @@
 	int endRow = currentPage*pageSize; //마지막 게시물 번호 페이지
 	ArrayList<BoardDTO> arr = dao.boardList(field, word, startRow, endRow);
 	int count = dao.boardCount(field, word);
+	
+// 	session 설정
+	String sid = (String)session.getAttribute("userid");
 %>
 
 </head>
 <body>
 	<div align="right">
-		<a href="writeForm.jsp">글쓰기</a>
+<!-- 		session 존재하면 로그인 화면(회원 로그인) member와 연동 -->
+		<%
+		if(sid!=null){
+		%>
+			<%=sid %>님 반갑습니다 /
+			<a href="../member/logout.jsp">로그아웃</a> /
+			<a href="writeForm.jsp">글쓰기</a>
+		<%
+		}else{ //session 없음
+		%>
+<!-- 			상대경로 -->
+			<a href="../member/loginForm.jsp">(상대경로)로그인</a>
+<!-- 			절대경로 -->
+			<a href="/MemberProject/member/loginForm.jsp">(절대경로)로그인</a>
+		<%
+		}
+		%>
 	</div>
 	<h2>게시글 목록(<%=count %>)</h2>
 	<table border="1">

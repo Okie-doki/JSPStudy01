@@ -12,6 +12,7 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 import com.board.dto.BoardDTO;
+import com.board.dto.CommentDTO;
 
 public class BoardDAO {
 //	DB셋팅
@@ -255,6 +256,55 @@ public class BoardDAO {
 			closeConnection(con, null, st, null);
 		}
 		return flag;
+	}
+	
+//	comment 전체보기
+	public ArrayList<CommentDTO> commentList(int bnum){
+		Connection con = null;
+		Statement st = null;
+		ResultSet rs = null;
+		ArrayList<CommentDTO> arr = new ArrayList<CommentDTO>();
+		
+		try {
+			con = getConnection();
+			String sql = "select * from commentboard where bnum="+bnum+" order by cnum desc";
+			st = con.createStatement();
+			rs = st.executeQuery(sql);
+			while(rs.next()) {
+				CommentDTO comment = new CommentDTO();
+				comment.setCnum(rs.getInt("cnum"));
+				comment.setMsg(rs.getString("msg"));
+				comment.setBnum(rs.getInt("bnum"));
+				comment.setUserid(rs.getString("userid"));
+				comment.setRegdate(rs.getString("regdate"));
+				arr.add(comment);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(con, null, st, rs);
+		} 
+		return arr;
+	}
+	
+//	comment 추가
+	public void commentInsert(CommentDTO comment) {
+		Connection con = null;
+		PreparedStatement ps = null;
+		
+		try {
+			con = getConnection();
+			String sql = "insert into commentboard values(commentboard_seq.nextval, ?,?,?,sysdate)";
+			ps = con.prepareStatement(sql);
+			ps.setString(1, comment.getMsg());
+			ps.setInt(2, comment.getBnum());
+			ps.setString(3, comment.getUserid());
+			ps.execute();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(con, ps, null, null);
+		}
 	}
 	
 	private void closeConnection(Connection con, PreparedStatement ps, Statement st, ResultSet rs) {

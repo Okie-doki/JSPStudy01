@@ -22,7 +22,9 @@
 <body>
 	<div align="right">
 		<a href="memberView.jsp"><%=sid %></a>관리자님 반갑습니다 /
-		<a href="logout.jsp">로그아웃</a>
+		<a href="logout.jsp">로그아웃</a> /
+<!-- 		board 연동을 위한 임시 작업 -->
+		<a href="../board/list.jsp">게시판 이동</a>
 	</div>
 	<h3>전체보기(<span id="countSpan"><%=count %></span>)</h3>
 	<table>
