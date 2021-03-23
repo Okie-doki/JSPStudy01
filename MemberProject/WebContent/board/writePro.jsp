@@ -1,3 +1,4 @@
+<%@page import="java.io.Console"%>
 <%@page import="com.board.dao.BoardDAO"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>

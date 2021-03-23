@@ -42,14 +42,14 @@ public class BoardDAO {
 				sb.append("select * from (");
 				sb.append(" select rownum rn, aa.* from (");
 				sb.append(" select * from board");
-				sb.append(" order by num desc, ref desc, re_step asc) aa");
+				sb.append(" order by ref desc, re_step asc) aa");
 				sb.append(" where rownum <= ?");
 				sb.append(") where rn >= ?");
 			}else { //검색값 존재
 				sb.append("select * from (");
 				sb.append(" select rownum rn, aa.* from (");
 				sb.append(" select * from board where "+field+" like '%"+word+"%'"); //필드값, 검색값 추가
-				sb.append(" order by num desc, ref desc, re_step asc) aa");
+				sb.append(" order by ref desc, re_step asc) aa");
 				sb.append(" where rownum <= ?");
 				sb.append(") where rn >= ?");
 			}
@@ -147,17 +147,55 @@ public class BoardDAO {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		
+//		부모글(댓글일 경우)
+		int num = board.getNum();
+		int ref = board.getRef();
+		int re_step = board.getRe_step();
+		int re_level = board.getRe_level();
+		
+		int number = 0; //ref 결정할 때 사용
+		
 		try {
 			con = getConnection();
-			String sql = "insert into board(num, writer, subject, email, content, ip, passwd) "
-					+ "values(board_seq.nextval, ?,?,?,?,?,?)";
-			ps = con.prepareStatement(sql);
+			ps = con.prepareStatement("select max(num) from board");
+			rs = ps.executeQuery();
+			
+			if(rs.next()) { //db에 데이터가 존재한다면 num의 최대값을 ref로 사용
+				number = rs.getInt(1)+1;
+			}else { //db 데이터가 하나도 없다면 ref = 1
+				number = 1;
+			}
+			
+			if(num!=0) { //댓글
+				String sql = "update board set re_step = re_step+1 where ref=? and re_step>?";
+				ps = con.prepareStatement(sql);
+				ps.setInt(1, ref);
+				ps.setInt(2, re_step);
+				ps.executeUpdate(); //기존 데이터 re_step변경
+				re_step = re_step+1; //부모 re_step에서 +1 -> 새로 들어갈 데이터의 re_step 결정
+				re_level = re_level+1; //부모 re_level에서 +1 -> 새로 들어갈 데이터의 re_level 결정
+			}else { //새글
+				ref = number;
+				re_step = 0;
+				re_level = 0;
+			}
+			
+			StringBuilder sb = new StringBuilder();
+			sb.append("insert into board");
+			sb.append("(num, writer, subject, email, content, ip, ");
+			sb.append("ref, re_step, re_level, passwd)");
+			sb.append(" values(board_seq.nextval, ?,?,?,?,?,?,?,?,?)");
+			
+			ps = con.prepareStatement(sb.toString());
 			ps.setString(1, board.getWriter());
 			ps.setString(2, board.getSubject());
 			ps.setString(3, board.getEmail());
 			ps.setString(4, board.getContent());
 			ps.setString(5, board.getIp());
-			ps.setString(6, board.getPasswd());
+			ps.setInt(6, ref);
+			ps.setInt(7, re_step);
+			ps.setInt(8, re_level);
+			ps.setString(9, board.getPasswd());
 			ps.executeUpdate();
 		} catch (Exception e) {
 			e.printStackTrace();

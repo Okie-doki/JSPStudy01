@@ -14,6 +14,9 @@
 	BoardDAO dao  = BoardDAO.getInstance();
 	BoardDTO board = dao.boardView(num);
 	
+	int ref = board.getRef();
+	int re_step = board.getRe_step();
+	int re_level = board.getRe_level();
 %>
 <script type="text/javascript">
 	function del() {
@@ -49,11 +52,15 @@
 			<td colspan="4">
 				<input type="button" value="수정" onclick="location.href='updateForm.jsp?num=<%=num%>'">
 				<input type="button" value="삭제" onclick="del()">
-				<input type="button" value="댓글쓰기">
+				<input type="button" value="댓글쓰기" onclick="location.href='writeForm.jsp?num=<%=num%>&ref=<%=ref%>&re_step=<%=re_step%>&re_level=<%=re_level%>'">
 				<input type="button" value="목록" onclick="location.href='list.jsp'">
 			</td>
 		</tr>
-	
 	</table>
+	<br><br><br>
+	<div align="left">
+		<textarea rows="5" cols="50" id="msg"></textarea>
+		<input type="button" value="comment write" id="commentBtn">
+	</div>
 </body>
 </html>
