@@ -69,7 +69,6 @@ public class MemberDAOImpl implements MemberDAO{
 			con = getConnection();
 			String sql = "insert into memberdb values(?,?,?,?,?,?)";
 			ps = con.prepareStatement(sql);
-			ps = con.prepareStatement(sql);
 			ps.setString(1, member.getName());
 			ps.setString(2, member.getUserid());
 			ps.setString(3, member.getPwd());
