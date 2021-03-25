@@ -90,7 +90,7 @@ public class AddressDAO {
 		return arr;
 	}
 	
-//	출력 결과 갯수
+//	출력 결과 개수
 	public int getCount(String field, String word) {
 		Connection con = null;
 		Statement st = null;
