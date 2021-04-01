@@ -10,7 +10,7 @@ public interface MemberDAO {
 //	수정
 	public void memeberUpdate(MemberDTO member);
 //	삭제
-	public void memberDelete(MemberDTO member);
+	public void memberDelete(String userid);
 //	상세보기
 	public MemberDTO findById(String userid);
 //	회원수

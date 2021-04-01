@@ -83,3 +83,31 @@ $(document).ready(function(){
 		})
 	})
 })
+
+function del(userid){
+	if(confirm("정말 삭제할까요?")){
+		$.getJSON("userDelete",{
+			"userid" : userid
+		}, function(resp){
+//			alert(resp);
+			var str = "";
+			$.each(resp.jarr, function(key, val){
+				str += "<tr>";
+				str += "<td>"+val.name+"</td>";
+				str += "<td>"+val.userid+"</td>";
+				str += "<td>"+val.phone+"</td>";
+				str += "<td>"+val.email+"</td>";
+				str += "<td>"+val.mode+"</td>";
+				if(val.mode=='일반회원'){
+					str += "<td onclick=del('"+val.userid+"')>삭제</td>";
+				}else{
+					str += "<td>Admin</td>";
+				}
+				str += "</tr>";
+			})
+			$("table tbody").html(str);
+			$("#cntSpan").text(resp.countObj.count);
+		})
+		
+	}
+}

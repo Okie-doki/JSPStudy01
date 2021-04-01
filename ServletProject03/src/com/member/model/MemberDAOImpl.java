@@ -24,11 +24,35 @@ public class MemberDAOImpl implements MemberDAO {
 		return ds.getConnection();
 	}
 	
-	
+//	전체보기
 	@Override
 	public ArrayList<MemberDTO> getMember() {
-		// TODO Auto-generated method stub
-		return null;
+		Connection con = null;
+		Statement st = null;
+		ResultSet rs = null;
+		ArrayList<MemberDTO> arr = new ArrayList<MemberDTO>();
+		
+		try {
+			con = getConnection();
+			String sql = "select * from memberdb";
+			st = con.createStatement();
+			rs = st.executeQuery(sql);
+			while(rs.next()) {
+				MemberDTO member = new MemberDTO();
+				member.setName(rs.getString("name"));
+				member.setUserid(rs.getString("userid"));
+				member.setPwd(rs.getString("pwd"));
+				member.setEmail(rs.getString("email"));
+				member.setPhone(rs.getString("phone"));
+				member.setAdmin(rs.getInt("admin"));
+				arr.add(member);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(con, null, st, rs);
+		}
+		return arr;
 	}
 
 //	회원추가
@@ -55,28 +79,101 @@ public class MemberDAOImpl implements MemberDAO {
 		}
 	}
 
+//	회원수정
 	@Override
 	public void memeberUpdate(MemberDTO member) {
-		// TODO Auto-generated method stub
-
+		Connection con = null;
+		PreparedStatement ps = null;
+		
+		try {
+			con = getConnection();
+			String sql = "update memberdb set name=?, pwd=?, email=?, admin=?, phone=? where userid=?";
+			ps = con.prepareStatement(sql);
+			ps.setString(1, member.getName());
+			ps.setString(2, member.getPwd());
+			ps.setString(3, member.getEmail());
+			ps.setInt(4, member.getAdmin());
+			ps.setString(5, member.getPhone());
+			ps.setString(6, member.getUserid());
+			ps.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(con, ps, null, null);
+		}
 	}
 
+//	회원삭제
 	@Override
-	public void memberDelete(MemberDTO member) {
-		// TODO Auto-generated method stub
-
+	public void memberDelete(String userid) {
+		Connection con = null;
+		Statement st = null;
+		
+		try {
+			con = getConnection();
+			String sql = "delete from memberdb where userid='"+userid+"'";
+			st = con.createStatement();
+			st.execute(sql);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(con, null, st, null);
+		}
+		
 	}
 
+//	상세보기
 	@Override
 	public MemberDTO findById(String userid) {
-		// TODO Auto-generated method stub
-		return null;
+		Connection con = null;
+		Statement st = null;
+		ResultSet rs = null;
+		MemberDTO member = null;
+		
+		try {
+			con = getConnection();
+			String sql = "select * from memberdb where userid = '"+userid+"'";
+			st = con.createStatement();
+			rs = st.executeQuery(sql);
+			while(rs.next()) {
+				member = new MemberDTO();
+				member.setName(rs.getString("name"));
+				member.setName(rs.getString("userid"));
+				member.setPwd(rs.getString("pwd"));
+				member.setEmail(rs.getString("email"));
+				member.setPhone(rs.getString("phone"));
+				member.setAdmin(rs.getInt("admin"));
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(con, null, st, rs);
+		}
+		return member;
 	}
 
+//	회원 수
 	@Override
 	public int memberCount() {
-		// TODO Auto-generated method stub
-		return 0;
+		Connection con = null;
+		Statement st = null;
+		ResultSet rs = null;
+		int count = 0;
+		
+		try {
+			con = getConnection();
+			String sql = "select count(*) count from memberdb";
+			st = con.createStatement();
+			rs = st.executeQuery(sql);
+			if(rs.next())
+				count = rs.getInt("count");
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(con, null, st, rs);
+		}
+		return count;
 	}
 
 //	아이디 중복 확인
