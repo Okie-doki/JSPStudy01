@@ -55,7 +55,56 @@
 		<button type="button" class="btn btn-secondary mb-3" id="delBtn">삭제</button>
 	</c:if>
 	
+<!-- 	코멘트 -->
+	<div class="container mt-5">
+		<textarea rows="5" cols="50" id="msg"></textarea>
+		<button type="button" class="btn btn-success mb-3" id="commentBtn">
+		Comment Write</button>
+    </div>
+	<hr>
+	<div id="result"></div>
+	
 </div>
 
+<script>
+	var init = function() {
+		$.getJSON("commentlist", 
+				{"bnum" : $("#num").val()},
+				function(resp) {
+					var str = "<table class='table table-hover'>";
+					$.each(resp, function(key, val) {
+						str += "<tr>";
+						str += "<td>"+val.msg+"</td>";
+						str += "<td>"+val.userid+"</td>";
+						str += "<td>"+val.regdate+"</td>";
+						str += "</tr>";
+					})
+					str += "</table>";
+					$("#result").html(str);
+				}
+		)
+	}
+
+	$("#commentBtn").on("click", function() {
+		$.ajax({
+			type: "get",
+			url: "commentInsert",
+			data: {"msg" : $("#msg").val(), "bnum" : $("#num").val()}
+		}).done(function(resp) {
+// 			alert(resp);
+			if(resp.trim()==1){
+				alert("로그인하세요");
+				location.href="/ServletProject03/member/login";
+			}else{
+				init();
+				$("#msg").val("");
+			}
+		}).fail(function(e) {
+			alert("error : "+e);
+		})
+	})
+	
+	init();
+</script>
 
 <%@ include file="../include/footer.jsp"%>

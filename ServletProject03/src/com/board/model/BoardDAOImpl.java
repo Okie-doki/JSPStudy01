@@ -188,16 +188,54 @@ public class BoardDAOImpl implements BoardDAO {
 		return board;
 	}
 
+//	코멘트 리스트
 	@Override
 	public ArrayList<CommentDTO> findAllComment(int bnum) {
-		// TODO Auto-generated method stub
-		return null;
+		Connection con = null;
+		Statement st = null;
+		ResultSet rs = null;
+		ArrayList<CommentDTO> arr = new ArrayList<CommentDTO>();
+		
+		try {
+			con = getConnection();
+			String sql = "select * from comboard where bnum="+bnum;
+			st = con.createStatement();
+			rs = st.executeQuery(sql);
+			while(rs.next()) {
+				CommentDTO comment = new CommentDTO();
+				comment.setCnum(rs.getInt("cnum"));
+				comment.setMsg(rs.getString("msg"));
+				comment.setBnum(rs.getInt("bnum"));
+				comment.setUserid(rs.getString("userid"));
+				comment.setRegdate(rs.getString("regdate"));
+				arr.add(comment);
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} closeConnection(con, null, st, rs);
+		return arr;
 	}
 
+//	코멘트 추가
 	@Override
 	public void commentInsert(CommentDTO comment) {
-		// TODO Auto-generated method stub
-
+		Connection con = null;
+		PreparedStatement ps = null;
+		
+		try {
+			con = getConnection();
+			String sql = "insert into comboard values(comboard_seq.nextval, ?,?,?,sysdate)";
+			ps = con.prepareStatement(sql);
+			ps.setString(1, comment.getMsg());
+			ps.setInt(2, comment.getBnum());
+			ps.setString(3, comment.getUserid());
+			ps.execute();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			closeConnection(con, ps, null, null);
+		}
 	}
 	
 	private void closeConnection(Connection con,
