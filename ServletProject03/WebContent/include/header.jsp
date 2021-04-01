@@ -21,13 +21,13 @@
 		<span class="navbar-toggler-icon"></span>
 	</button>
 	<div class="collapse navbar-collapse" id="collapsibleNavbar">
-		<ul class="navbar-nav mr-auto">
+		<ul class="navbar-nav mr-auto"><!-- margin 사용 -->
 <!-- 			상대경로보다 절대경로 사용 : 어느 위치에서든 메뉴이동 가능해야 하기 때문 -->
 			<li class="nav-item">
 				<a class="nav-link" href="/ServletProject03/board/boardlist">게시판</a>
 			</li>
 			<li class="nav-item">
-				<a class="nav-link" href="#">상품보기</a>
+				<a class="nav-link" href="/ServletProject03/product/plist">상품보기</a>
 			</li>
 			
 			<c:choose>
