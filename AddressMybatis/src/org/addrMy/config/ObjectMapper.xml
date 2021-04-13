@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.addrMy.comfig.ObjectMapper">
+<sql id="search">
+	<where>
+		<if test="word!=null and field=='name'">
+			name like '%${word}%'
+		</if>
+		<if test="word!=null and field=='tel'">
+			tel like '%${word}%'
+		</if>
+	</where>
+</sql>
+
+<!-- 주소등록 -->
+<insert id="insertData" parameterType="org.addrMy.model.Address">
+	insert into address(num, name, addr, zipcode, tel) values(address_seq.nextval, #{name}, #{addr}, #{zipcode}, #{tel})
+</insert>
+
+<!-- 주소정보 수정 -->
+<update id="updateData" parameterType="org.addrMy.model.Address">
+	update address set name=#{name}, addr=#{addr}, zipcode=#{zipcode}, tel=#{tel} where num=#{num}	
+</update>
+
+<!-- 주소삭제 -->
+<delete id="deleteData" parameterType="int">
+	delete from address where num = #{num}
+</delete>
+
+<!--  우편번호 검색 -->
+<select id="zipData" parameterType="String" resultType="org.addrMy.model.Zipcode">
+<!--  	select * from zipcode where dong like '%'||#{dong}||'%' --> 
+	select * from zipcode where dong like '%${dong}%'
+</select>
+
+<!-- 주소목록 -->
+<select id="listData" resultType="org.addrMy.model.Address">
+	select * from address
+</select>
+
+<!-- 주소목록 개수 -->
+<select id="countData" resultType="int">
+	select count(*) from address
+</select>
+
+<!-- 주소 상세보기 -->
+<select id="viewData" resultType="org.addrMy.model.Address">
+	select * from address where num = #{num}
+</select>
+
+<!-- 검색결과값 출력 -->
+<select id="searchData" parameterType="HashMap" resultType="org.addrMy.model.Address">
+<!-- 	select * from address where #{field} like '%${word}%' -->
+
+	select * from address
+<!-- 	<where> -->
+<!-- 		<if test="word!=null and field=='name'"> -->
+<!-- 			name like '%${word}%' -->
+<!-- 		</if> -->
+<!-- 		<if test="word!=null and field=='tel'"> -->
+<!-- 			tel like '%${word}%' -->
+<!-- 		</if> -->
+<!-- 	</where> -->
+	<include refid="search"></include>
+</select>
+
+<!-- 검색결과값 개수 -->
+<select id="searchCount" parameterType="HashMap" resultType="int">
+<!--  	select count(*) from address where #{field} like '%${word}%' -->
+	select count(*) count from address
+	<include refid="search"></include>
+ </select>
+
+</mapper>
