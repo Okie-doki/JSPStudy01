@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<div id="result"></div>
+
+<script type="text/javascript">
+	let target = document.querySelector("#result");
+	
+	fetch("https://yts.mx/api/v2/list_movies.json?sort_by=rating",{
+		method: "get"
+	})
+	.then(res=>res.json())
+	.then(function(res) {
+// 		console.log(res);
+		target.innerHTML = res.data.movies.map(m=>'title : '+m.title + '<br><img src="'+m.large_cover_image+'" width=300px height=300/><br>').join("");
+	})
+</script>
+
+</body>
+</html>

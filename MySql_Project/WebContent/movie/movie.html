@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="container">
+	<div id="result"></div>
+</div>
+
+<script type="text/javascript">
+	$.ajax({
+		type: "get",
+		url: "https://yts.mx/api/v2/list_movies.json?sort_by=rating"
+	})
+	.done(function(resp) {
+// 		console.log(resp.movies);
+		var str='<div class="row">';
+		$.each(resp.data.movies, function(key, movie) {
+			str += '<div class="col-4" style="width: 400px">'
+			str += '<img class="card-img-top" src='+movie.large_cover_image+' alt="Card image" style="width: 50%">'
+			str += '<div class="card-body">'
+			str += '<h4 class="card-title">'+movie.title+'</h4>'
+			str += '<p class="card-text">'+movie.summary+'</p>'
+			str += '</div>'
+			str += '</div>'
+		 })
+		 $("#result").html(str);
+	})
+	.fail(function(e) {
+		alert("error: "+e);
+	})
+</script>
+
+</body>
+</html>
